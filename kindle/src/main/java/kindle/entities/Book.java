@@ -1,5 +1,6 @@
 package kindle.entities;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -22,14 +23,33 @@ public class Book {
 	@ManyToOne
 	private Publisher publisher;
 	
-	public Book(String title, int pages, List<Author> authors, Publisher publisher) {
+	public Book(String title, int pages, Publisher publisher) {
 		super();
 		this.title = title;
 		this.pages = pages;
-		this.authors = authors;
+		this.authors = new ArrayList<Author>();
 		this.publisher = publisher;
 	}
 
+	public void addAuthor(Author author) {
+		if(author != null)
+			authors.add(author);
+	}
+	
+	public boolean verifyAuthorsList() {
+		if (authors.size() < 1)
+			return false;
+		
+		return true;
+	}
+	
+	public boolean verifyPages() {
+		if (pages < 0)
+			return false;
+		
+		return true;
+	}
+	
 	public int getId() {
 		return id;
 	}
