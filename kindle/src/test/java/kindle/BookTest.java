@@ -3,8 +3,11 @@ package kindle;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.jupiter.api.AfterAll;
@@ -22,45 +25,64 @@ import kindle.entities.Book;
 import kindle.entities.Publisher;
 
 class BookTest {
-	
-	static Book book = null;
-	static Publisher publisher;
 
-	@Timeout(value = 5, unit = TimeUnit.SECONDS)
+	static Book book1;
+	static Book book2;
+	static List<Publisher> publishers = new ArrayList<>();
+	static List<Author> authors = new ArrayList<>();	
+	
+	@Test
 	@BeforeAll
-	static void init() {
+	static void createInitialData() {
+		UtilDB.getEntityManager();
+
 		Author author = new Author("Gustao Ferreira Souza");
-		author.setId(AuthorDAO.persist(author));
+		authors.add(author);
 		
 		Publisher publisher = new Publisher("Veja");
-		publisher.setId(PublisherDAO.persist(publisher));
-
-		book = new Book("Livro", 150, null);
-	}	
+		publishers.add(publisher);
+		
+		book1 = new Book("Livro", 150, null);
+		book2 = new Book("Livro 2", 240, publisher);
+	}
 	
+	@Test
+	@Timeout(value = 2, unit = TimeUnit.SECONDS)
+	void saveInitialData() { 
+		publishers = PublisherDAO.persistList(publishers);
+		authors = AuthorDAO.persistList(authors);
+	}
+		
 	@BeforeEach
 	void checkBook() {
-		assertNotNull(book);
+		assertNotNull(book1);
+		assertNotNull(book2);
+	}
+	
+	@Test
+	void checkBookTitles() {
+		assertNotEquals(book1.getTitle(), book2.getTitle());
 	}
 	
 	@Test
 	void checkPublisher() {
-		assertNull(book.getPublisher());
+		assertNull(book1.getPublisher());
 	}
 		
 	@Test
 	void testAuthorsList() {
-		assumeFalse(book.verifyAuthorsList());
+		assumeFalse(book1.verifyAuthorsList());
 	}
 	
 	@Test
 	void testPages(){
-		assumeTrue(book.verifyPages());
+		assumeTrue(book1.verifyPages());
 	}
 	
 	@AfterAll
 	static void close() {
-		BookDAO.persist(book);
+		BookDAO.persist(book1);
+		BookDAO.persist(book2);
 		UtilDB.closeConn();
 	}
 
