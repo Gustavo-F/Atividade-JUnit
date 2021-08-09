@@ -33,4 +33,11 @@ public class Author {
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
 	}	
+	
+	public boolean checkName() {
+		if (this.fullName.length() < 3)
+			return false;
+		
+		return true;
+	}
 }

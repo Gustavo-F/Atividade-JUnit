@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.util.ArrayList;
@@ -77,6 +78,15 @@ class BookTest {
 	@Test
 	void testPages(){
 		assumeTrue(book1.verifyPages());
+	}
+	
+	@Test
+	void createAuthor() {
+		Author newAuthor = new Author("Ximbinha");
+		
+		assertThrows(NullPointerException.class, () -> {
+			newAuthor.checkName();
+		});
 	}
 	
 	@AfterAll
